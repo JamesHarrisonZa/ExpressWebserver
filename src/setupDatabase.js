@@ -10,13 +10,13 @@ MongoClient.connect(config.url, function (err, db) {
 
 	dbo.createCollection(config.collectionName, function (err, res) {
 		if (err) throw err;
-		console.log("Collection created!");
+		console.log('Collection created!');
 		db.close();
 	});
 
 	dbo.collection(config.collectionName).insertMany(data, function (err, res) {
 		if (err) throw err;
-		console.log("1 document inserted");
+		console.log(`${data.length} documents inserted`);
 		db.close();
 	});
 });
