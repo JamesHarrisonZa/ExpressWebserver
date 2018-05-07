@@ -27,10 +27,21 @@ router.route('/Books')
 		res.json(results);
 	});
 
+router.route('/Books/:bookId')
+	.get(async (req, res) => {
+
+		const mongoClient = await MongoClient.connect(config.url);
+		const db = mongoClient.db(config.dbName);
+		const results = await db.collection(config.collectionName).findOne({}, req.params.bookId);
+		mongoClient.close();
+		res.json(results);
+	});
+
 app.use('/api', router);
 
 app.listen(port, () => {
 	console.log(`Listening on http://localhost:${port}`);
 	console.log(`API running at http://localhost:${port}/api/books`);
 	console.log(`Filtering should be working http://localhost:${port}/api/books?genre=Science%20Fiction`);
+	console.log(`Should return an object for a given id http://localhost:${port}/api/books/5af009a7af425630a8d7e82c`);
 });
