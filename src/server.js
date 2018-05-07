@@ -15,9 +15,14 @@ app.get('/', (req, res) => {
 router.route('/Books')
 	.get(async (req, res) => {
 
+		const query = {};
+		if (req.query.genre) {
+			query.genre = req.query.genre;
+		}
+
 		const mongoClient = await MongoClient.connect(config.url);
 		const db = mongoClient.db(config.dbName);
-		const results = await db.collection(config.collectionName).find({}).toArray();
+		const results = await db.collection(config.collectionName).find(query).toArray();
 		mongoClient.close();
 		res.json(results);
 	});
@@ -27,4 +32,5 @@ app.use('/api', router);
 app.listen(port, () => {
 	console.log(`Listening on http://localhost:${port}`);
 	console.log(`API running at http://localhost:${port}/api/books`);
+	console.log(`Filtering should be working http://localhost:${port}/api/books?genre=Science%20Fiction`);
 });
