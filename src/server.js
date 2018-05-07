@@ -1,40 +1,12 @@
 const express = require('express');
 const MongoClient = require('mongodb').MongoClient;
-
-const dbName = 'bookAPI';
-const collectionName = 'books';
-const url = `mongodb://localhost:27017/${dbName}`;
-
-// ----------------------------------------------------------------------------------------------------------------------------------
-// Creating some records
-MongoClient.connect(url, function (err, db) {
-	if (err) throw err;
-
-	const dbo = db.db(dbName);
-
-	dbo.createCollection(collectionName, function (err, res) {
-		if (err) throw err;
-		console.log("Collection created!");
-		db.close();
-	});
-
-	var myobj = {
-		title: 'War and Peace',
-		genre: 'Historical Fiction',
-		author: 'Lev Nikolayevich Tolstoy',
-		read: false
-	};
-	dbo.collection(collectionName).insertOne(myobj, function (err, res) {
-		if (err) throw err;
-		console.log("1 document inserted");
-		db.close();
-	});
-});
-// ----------------------------------------------------------------------------------------------------------------------------------
+const mongoDbConfig = require('./mongoDbConfig');
 
 const app = express();
 const port = process.env.PORT || 42420;
 const router = express.Router();
+
+const config = mongoDbConfig();
 
 app.get('/', (req, res) => {
 	res.send('welcome to my API!');
@@ -43,9 +15,9 @@ app.get('/', (req, res) => {
 router.route('/Books')
 	.get(async (req, res) => {
 
-		const mongoClient = await MongoClient.connect(url);
-		const db = mongoClient.db(dbName);
-		const results = await db.collection(collectionName).find({}).toArray();
+		const mongoClient = await MongoClient.connect(config.url);
+		const db = mongoClient.db(config.dbName);
+		const results = await db.collection(config.collectionName).find({}).toArray();
 		mongoClient.close();
 		res.json(results);
 	});
