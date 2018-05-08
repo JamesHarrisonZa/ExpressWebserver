@@ -37,12 +37,6 @@ const mongoDbStorage = require('./mongoDbStorage');
 		console.log(`Should return an object for a given id http://localhost:${port}/api/books/5af009a7af425630a8d7e82c`);
 	});
 
-	// process.on('SIGTERM', () => {
-	// 	console.log('Bye ;(');
-	// 	storage.close();
-	// 	process.exit();
-	// });
-
 })().catch((error) => {
 	console.log(error);
 });
