@@ -1,47 +1,48 @@
 const express = require('express');
-const MongoClient = require('mongodb').MongoClient;
-const mongoDbConfig = require('./mongoDbConfig');
+const mongoDbStorage = require('./mongoDbStorage');
 
-const app = express();
-const port = process.env.PORT || 42420;
-const router = express.Router();
+(async ()=> {
 
-const config = mongoDbConfig();
+	const app = express();
+	const port = process.env.PORT || 42420;
+	const router = express.Router();
+	const storage = await mongoDbStorage();
 
-app.get('/', (req, res) => {
-	res.send('welcome to my API!');
-});
-
-router.route('/Books')
-	.get(async (req, res) => {
-
-		const query = {};
-		if (req.query.genre) {
-			query.genre = req.query.genre;
-		}
-
-		const mongoClient = await MongoClient.connect(config.url);
-		const db = mongoClient.db(config.dbName);
-		const results = await db.collection(config.collectionName).find(query).toArray();
-		mongoClient.close();
-		res.json(results);
+	app.get('/', (req, res) => {
+		res.send('welcome to my API!');
 	});
 
-router.route('/Books/:bookId')
-	.get(async (req, res) => {
+	router.route('/Books')
+		.get((req, res, next) => {
 
-		const mongoClient = await MongoClient.connect(config.url);
-		const db = mongoClient.db(config.dbName);
-		const results = await db.collection(config.collectionName).findOne({}, req.params.bookId);
-		mongoClient.close();
-		res.json(results);
+			storage.findAsync(req.query)
+				.then((results) => res.json(results))
+				.catch((error) => next(error));
+		});
+
+	router.route('/Books/:bookId')
+		.get((req, res, next) => {
+
+			storage.findByIdAsync(req.params.bookId)
+				.then((results) => res.json(results))
+				.catch((error) => next(error));
+		});
+
+	app.use('/api', router);
+
+	app.listen(port, () => {
+		console.log(`Listening on http://localhost:${port}`);
+		console.log(`API running at http://localhost:${port}/api/books`);
+		console.log(`Filtering should be working http://localhost:${port}/api/books?genre=Science%20Fiction`);
+		console.log(`Should return an object for a given id http://localhost:${port}/api/books/5af009a7af425630a8d7e82c`);
 	});
 
-app.use('/api', router);
+	// process.on('SIGTERM', () => {
+	// 	console.log('Bye ;(');
+	// 	storage.close();
+	// 	process.exit();
+	// });
 
-app.listen(port, () => {
-	console.log(`Listening on http://localhost:${port}`);
-	console.log(`API running at http://localhost:${port}/api/books`);
-	console.log(`Filtering should be working http://localhost:${port}/api/books?genre=Science%20Fiction`);
-	console.log(`Should return an object for a given id http://localhost:${port}/api/books/5af009a7af425630a8d7e82c`);
+})().catch((error) => {
+	console.log(error);
 });
