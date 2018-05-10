@@ -17,7 +17,7 @@ function bookRoute(storage) {
 
 			const book = new Book(req.body.title, req.body.genre, req.body.author, req.body.read);
 			storage.insertAsync(book)
-				.then((result) => res.send(`Inserted book: ${JSON.stringify(book)}`))
+				.then((result) => res.status(201).send(`Inserted book: ${JSON.stringify(book)}`))
 				.catch((error) => next(error));
 		});
 
@@ -32,7 +32,7 @@ function bookRoute(storage) {
 
 			const book = new Book(req.body.title, req.body.genre, req.body.author, req.body.read);
 			storage.updateAsync(req.params.id, book)
-				.then((results) => res.send(`Updated book: ${JSON.stringify(book)}`))
+				.then((results) => res.status(202).send(`Updated book: ${JSON.stringify(book)}`))
 				.catch((error) => next(error));
 		})
 		.patch((req, res, next) => {
@@ -40,7 +40,13 @@ function bookRoute(storage) {
 			if (req.body._id) delete req.body._id;
 
 			storage.updateFieldsAsync(req.params.id, req.body)
-				.then((results) => res.send(`Patched book: ${JSON.stringify(req.body)}`))
+				.then((results) => res.status(202).send(`Patched book: ${JSON.stringify(req.body)}`))
+				.catch((error) => next(error));
+		})
+		.delete((req, res, next) => {
+
+			storage.deleteAsync(req.params.id)
+				.then((results) => res.status(204).send())
 				.catch((error) => next(error));
 		});
 

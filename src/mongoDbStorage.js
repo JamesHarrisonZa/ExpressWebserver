@@ -50,12 +50,20 @@ async function mongoDbStorage() {
 		return result;
 	}
 
+	async function deleteAsync(id) {
+
+		const query = { _id: new ObjectID(id) };
+		const result = await db.collection(config.collectionName).deleteOne(query);
+		return result;
+	}
+
 	return {
 		findAsync,
 		findByIdAsync,
 		insertAsync,
 		updateAsync,
-		updateFieldsAsync
+		updateFieldsAsync,
+		deleteAsync
 	}
 }
 
