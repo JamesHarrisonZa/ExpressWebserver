@@ -1,4 +1,4 @@
-const MongoClient = require('mongodb').MongoClient;
+const { MongoClient } = require('mongodb');
 const mongoDbConfig = require('./mongoDbConfig');
 
 async function mongoDbStorage() {
@@ -23,6 +23,12 @@ async function mongoDbStorage() {
 		return results;
 	}
 
+	async function postAsync(book) {
+
+		const result = await db.collection(config.collectionName).insertOne(book);
+		return result;
+	}
+
 	function close(){
 		mongoClient.close();
 	}
@@ -30,6 +36,7 @@ async function mongoDbStorage() {
 	return {
 		findAsync,
 		findByIdAsync,
+		postAsync,
 		close
 	}
 }

@@ -11,6 +11,7 @@
 	"author": "James Harrison",
 	"license": "ISC",
 	"dependencies": {
+		"body-parser": "^1.18.2",
 		"express": "^4.16.3",
 		"mongodb": "^3.0.7"
 	}
