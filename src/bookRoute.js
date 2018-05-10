@@ -16,7 +16,7 @@ function bookRoute(storage) {
 		.post((req, res, next) => {
 
 			const book = new Book(req.body.title, req.body.genre, req.body.author, req.body.read);
-			storage.postAsync(book)
+			storage.insertAsync(book)
 				.then((result) => res.send(`Inserted book: ${JSON.stringify(book)}`))
 				.catch((error) => next(error));
 		});
@@ -26,6 +26,13 @@ function bookRoute(storage) {
 
 			storage.findByIdAsync(req.params.id)
 				.then((results) => res.json(results))
+				.catch((error) => next(error));
+		})
+		.put((req, res, next) => {
+
+			const book = new Book(req.body.title, req.body.genre, req.body.author, req.body.read);
+			storage.updateAsync(req.params.id, book)
+				.then((results) => res.send(`Updated book: ${JSON.stringify(book)}`))
 				.catch((error) => next(error));
 		});
 
