@@ -1,5 +1,5 @@
 # ExpressWebserver
-Node webserver with Express
+Node webserver with ExpressJS and MongoDb
 
 ## Docker commands
 * docker pull mongo
@@ -12,4 +12,3 @@ Node webserver with Express
 
 ### Insert Data
 * docker exec -it mongodb mongo admin
-* 
