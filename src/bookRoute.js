@@ -34,6 +34,14 @@ function bookRoute(storage) {
 			storage.updateAsync(req.params.id, book)
 				.then((results) => res.send(`Updated book: ${JSON.stringify(book)}`))
 				.catch((error) => next(error));
+		})
+		.patch((req, res, next) => {
+
+			if (req.body._id) delete req.body._id;
+
+			storage.updateFieldsAsync(req.params.id, req.body)
+				.then((results) => res.send(`Patched book: ${JSON.stringify(req.body)}`))
+				.catch((error) => next(error));
 		});
 
 	return router;

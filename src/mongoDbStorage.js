@@ -42,8 +42,12 @@ async function mongoDbStorage() {
 		return result;
 	}
 
-	function close(){
-		mongoClient.close();
+	async function updateFieldsAsync(id, fields) {
+
+		const query = { _id: new ObjectID(id) };
+		const values = { $set: fields };
+		const result = await db.collection(config.collectionName).updateOne(query, values);
+		return result;
 	}
 
 	return {
@@ -51,7 +55,7 @@ async function mongoDbStorage() {
 		findByIdAsync,
 		insertAsync,
 		updateAsync,
-		close
+		updateFieldsAsync
 	}
 }
 
